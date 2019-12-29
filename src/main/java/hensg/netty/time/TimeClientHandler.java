@@ -1,12 +1,8 @@
 package hensg.netty.time;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.concurrent.EventExecutorGroup;
 
-import java.util.Date;
 import java.util.logging.Logger;
 
 public class TimeClientHandler extends ChannelInboundHandlerAdapter {
@@ -15,14 +11,9 @@ public class TimeClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        ByteBuf m = (ByteBuf) msg; // (1)
-        try {
-            long currentTimeMillis = (m.readUnsignedInt() - 2208988800L) * 1000L;
-            logger.info("Date from server " + new Date(currentTimeMillis));
-            ctx.close();
-        } finally {
-            m.release();
-        }
+        UnixTime m = (UnixTime) msg; // (1)
+        logger.info("Time from server: " + m.toString());
+        ctx.close();
     }
 
     @Override

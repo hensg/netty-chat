@@ -24,7 +24,8 @@ public class TimeClient {
             b.handler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) {
-                    ch.pipeline().addLast(new TimeClientHandler());
+                    ch.pipeline()
+                            .addLast(new TimeDecoder(), new TimeClientHandler());
                 }
             });
 
