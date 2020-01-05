@@ -10,19 +10,23 @@ import java.util.List;
 public class ChatMessageDecoder extends ByteToMessageDecoder {
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) {
-        if (buf.readableBytes() < 8)
+        if (buf.readableBytes() < 4)
             return;
         buf.markReaderIndex();
 
         int sizeOriginUser = buf.readInt();
-        int sizeText = buf.readInt();
-
-        if (buf.readableBytes() < sizeOriginUser + sizeText + 8) {
+        if (buf.readableBytes() < sizeOriginUser + 4) {// 4: size of text
             buf.resetReaderIndex(); //buff not ready yet
             return;
         }
-
         ByteBuf originUser = buf.readBytes(sizeOriginUser);
+
+        int sizeText = buf.readInt();
+        if (buf.readableBytes() < sizeText) {
+            buf.resetReaderIndex(); //buff not ready yet
+            originUser.release();
+            return;
+        }
         ByteBuf text = buf.readBytes(sizeText);
 
         try {
@@ -33,8 +37,8 @@ public class ChatMessageDecoder extends ByteToMessageDecoder {
 
             out.add(msg);
         } finally {
-            text.release();
             originUser.release();
+            text.release();
         }
     }
 }

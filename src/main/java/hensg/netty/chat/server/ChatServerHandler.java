@@ -16,8 +16,6 @@ public class ChatServerHandler extends ChannelInboundHandlerAdapter {
 
     private final static ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
-    int indexKeeper = 0;
-
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
@@ -29,8 +27,6 @@ public class ChatServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object in) throws Exception {
         ChatMessage msg = (ChatMessage)in;
         logger.debug("Received message {} from client {}", msg, ctx.channel().remoteAddress());
-
-        assert indexKeeper++ == Integer.parseInt(msg.getMessage());
 
         for (Channel ch : channels) {
             if (ch != ctx.channel()) {

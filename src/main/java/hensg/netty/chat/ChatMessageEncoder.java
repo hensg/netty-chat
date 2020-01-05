@@ -21,9 +21,9 @@ public class ChatMessageEncoder extends MessageToByteEncoder<ChatMessage> {
 
         try {
             out.writeInt(sizeOriginUser);
-            out.writeInt(sizeText);
-
             out.writeBytes(msgOriginUser);
+
+            out.writeInt(sizeText);
             out.writeBytes(msgText);
         } finally {
             msgOriginUser.release();
